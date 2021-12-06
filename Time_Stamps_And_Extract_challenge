@@ -1,0 +1,22 @@
+/* question 1 - What months did payments occur? */ 
+SELECT payment_id, EXTRACT(MONTH FROM payment_date) AS payment_month
+FROM payment;
+
+SELECT DISTINCT(EXTRACT(MONTH FROM payment_date)) AS payment_month
+FROM payment 
+
+ORDER BY payment_month ASC;
+
+SELECT DISTINCT(TO_CHAR(payment_date, 'MONTH')) AS payment_months
+FROM payment; 
+
+
+/* question 2 - How many payments occured on a Monday? */ 
+SELECT COUNT(TO_CHAR(payment_date, 'DAY')) AS monday_payments
+FROM payment
+WHERE TO_CHAR(payment_date, 'DAY') ILIKE '%MONDAY%';
+
+/* question 2 - OTHER SOLUTION */ 
+SELECT COUNT(*)
+FROM payment
+WHERE Extract(dow FROM payment_date)=1
