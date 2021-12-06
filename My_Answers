@@ -1,0 +1,65 @@
+/* Question 1 - print the facilities table */
+SELECT * FROM cd.facilities;
+
+/* Question 2 - list the facilities */
+SELECT name, membercost, guestcost FROM cd.facilities;
+
+/* Question 3 - facilities not free to members */
+SELECT name, membercost, guestcost FROM cd.facilities
+WHERE membercost > 0;
+
+/* Question 4 - facilities not free to members with 1/50 the maintenance cost */
+SELECT facid, name, membercost, monthlymaintenance FROM cd.facilities
+WHERE membercost > 0 AND membercost*50 < monthlymaintenance;
+
+/* Question 5 - All facilities with 'Tennis' in the name */
+SELECT facid, name FROM cd.facilities
+WHERE name ILIKE '%tennis%';
+
+/* Question 6 - Facility ID 1 and 5 (Don't use OR operator) */
+SELECT facid, name FROM cd.facilities
+WHERE facid IN ('1','5');
+
+/* Question 7 - members who joined after start of September 2012 */
+SELECT memid, surname, firstname, joindate FROM cd.members
+WHERE joindate > '2012-08-31';
+
+/* Question 8 - ordered list of first 10 surnames in members table */
+SELECT DISTINCT(surname) FROM cd.members
+ORDER BY surname 
+LIMIT 10;
+
+/* Question 9 - signup of last member */
+SELECT firstname, surname, joindate FROM cd.members
+ORDER BY joindate DESC
+LIMIT 1;
+
+/* Question 10 - number of facilities with cost of 10 or more to guests */
+SELECT COUNT(name) AS facilities_over_10 FROM cd.facilities
+WHERE guestcost>= 10;
+
+/*SELECT * FROM cd.bookings*/
+/* Question 11 - total number of slots booked per facility */
+SELECT facid, SUM(slots) FROM cd.bookings
+WHERE EXTRACT(MONTH FROM starttime)= 9 AND EXTRACT(YEAR FROM starttime) = 2012
+GROUP BY facid;
+
+/* Question 12 - facilities with more than 1000 total bookings sorted by facility id */
+SELECT facid, SUM(slots) AS total_slots FROM cd.bookings
+GROUP BY facid
+HAVING SUM(slots) > 1000
+ORDER BY facid ASC;
+
+/* Question 13 - start times for tennis court bookings with start time and court number 
+for date '2012-09-21' */
+SELECT bookings.starttime, facilities.name FROM cd.bookings
+INNER JOIN cd.facilities
+ON bookings.facid = facilities.facid
+WHERE facilities.name ILIKE 'tennis%' AND TO_CHAR(starttime, 'yyyy-mm-dd') = '2012-09-21'
+ORDER BY EXTRACT(HOUR FROM bookings.starttime);
+
+/* Question 14 - Start times for booking by 'David Farrell' */
+SELECT firstname || ' ' || surname, starttime FROM cd.members
+INNER JOIN cd.bookings
+ON bookings.memid = members.memid
+WHERE members.firstname = 'David' AND members.surname = 'Farrell'
